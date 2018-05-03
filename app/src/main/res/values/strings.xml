@@ -7,7 +7,7 @@
     <string name="settings_menu">Settings</string>
     <string name="openchart_checkbox">Open chart after download</string>
     <string name="notfiy_checkbox">Show notifications</string>
-    <string name="interior_checkbox">Use interior PDF viewer</string>
+    <string name="interior_checkbox">Use internal PDF viewer</string>
     <string name="path_button">Change path</string>
     <string name="res_view">Resources</string>
     <string name="add_button">Add</string>
@@ -24,6 +24,6 @@
     <string name="writefail_message">Can\'t write %s charts</string>
     <string name="downstart_message">Downloading %s charts…</string>
     <string name="fieldempty_message">Please enter an ICAO code</string>
-    <string name="pdfreader_message">There isn\'t any PDF reader app exists</string>
+    <string name="pdfreader_message">There isn\'t any PDF reader app installed</string>
     <string name="fileexist_message">%s charts already exists</string>
 </resources>

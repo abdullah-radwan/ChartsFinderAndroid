@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     static boolean openChart;
 
-    static boolean interiorPDF;
+    static boolean internalPDF;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void showSettings(MenuItem item) {startActivity(new Intent(this, SettingsActivity.class)); overridePendingTransition(R.anim.enter, R.anim.exit);}
 
-    private void setPdfGroup(){if(interiorPDF){pdfGroup.setVisibility(View.VISIBLE);} else {pdfGroup.setVisibility(View.GONE);}}
+    private void setPdfGroup(){if(internalPDF){pdfGroup.setVisibility(View.VISIBLE);} else {pdfGroup.setVisibility(View.GONE);}}
 
     static public void resetRes(){
 

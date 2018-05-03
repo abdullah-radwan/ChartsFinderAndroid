@@ -23,7 +23,7 @@ class ConfigEditor {
 
         MainActivity.openChart = sharedPref.getBoolean("openChart", false);
 
-        MainActivity.interiorPDF = sharedPref.getBoolean("interiorPDF",true);
+        MainActivity.internalPDF = sharedPref.getBoolean("interiorPDF",true);
 
         MainActivity.path = sharedPref.getString("path", "");
 
@@ -52,7 +52,7 @@ class ConfigEditor {
 
         prefsEdit.putBoolean("openChart", MainActivity.openChart);
 
-        prefsEdit.putBoolean("interiorPDF", MainActivity.interiorPDF);
+        prefsEdit.putBoolean("interiorPDF", MainActivity.internalPDF);
 
         prefsEdit.putString("path", MainActivity.path);
 

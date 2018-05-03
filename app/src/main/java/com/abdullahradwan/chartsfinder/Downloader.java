@@ -221,7 +221,7 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
                         if(MainActivity.showNotify){Notify.notify(activity,appName,
                                 String.format(activity.getResources().getString(R.string.downcomp_message),icaoCode));}
 
-                        if(MainActivity.interiorPDF){
+                        if(MainActivity.internalPDF){
 
                             MainActivity.files.add(0, file);
 

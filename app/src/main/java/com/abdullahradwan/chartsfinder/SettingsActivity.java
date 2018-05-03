@@ -57,7 +57,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         openCheck.setChecked(MainActivity.openChart);
 
-        openCheck.setEnabled(!MainActivity.interiorPDF);
+        openCheck.setEnabled(!MainActivity.internalPDF);
 
         openCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -70,11 +70,11 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {MainActivity.showNotify = isChecked;}});
 
-        interiorCheck.setChecked(MainActivity.interiorPDF);
+        interiorCheck.setChecked(MainActivity.internalPDF);
 
         interiorCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {MainActivity.interiorPDF = isChecked; openCheck.setEnabled(!isChecked);}});
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {MainActivity.internalPDF = isChecked; openCheck.setEnabled(!isChecked);}});
 
         listView.setAdapter(adapter);
 
