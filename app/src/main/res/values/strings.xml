@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Charts Finder</string>
+    <string name="get_button">Get Charts</string>
+    <string name="icao_textview">Enter ICAO Code:</string>
+    <string name="icaoedit_hint">Separate with space</string>
+    <string name="file_textview">Choose airport:</string>
+    <string name="settings_menu">Settings</string>
+    <string name="openchart_checkbox">Open chart after download</string>
+    <string name="notfiy_checkbox">Show notifications</string>
+    <string name="interior_checkbox">Use interior PDF viewer</string>
+    <string name="path_button">Change path</string>
+    <string name="res_view">Resources</string>
+    <string name="add_button">Add</string>
+    <string name="remove_button">Remove</string>
+    <string name="reset_button">Reset</string>
+    <string name="order_textview">Enter order:</string>
+    <string name="url_textview">Enter URL:</string>
+    <string name="path_textview">"Path: "</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="correctorder_message">Please enter correct order</string>
+    <string name="fillin_message">Please fill alll fields</string>
+    <string name="downcomp_message">%s charts downloaded</string>
+    <string name="downfail_message">Can\'t find %s charts</string>
+    <string name="writefail_message">Can\'t write %s charts</string>
+    <string name="downstart_message">Downloading %s charts…</string>
+    <string name="fieldempty_message">Please enter an ICAO code</string>
+    <string name="pdfreader_message">There isn\'t any PDF reader app exists</string>
+    <string name="fileexist_message">%s charts already exists</string>
+</resources>
