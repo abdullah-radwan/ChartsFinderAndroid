@@ -29,7 +29,6 @@
         android:id="@+id/pathButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:elevation="2dp"
@@ -74,7 +73,7 @@
         app:layout_constraintTop_toBottomOf="@+id/notfiyCheck" />
 
     <TextView
-        android:id="@+id/resView"
+        android:id="@+id/urlView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -97,7 +96,7 @@
         app:layout_constraintBottom_toTopOf="@+id/removeButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resView" />
+        app:layout_constraintTop_toBottomOf="@+id/urlView" />
 
     <Button
         android:id="@+id/addButton"

@@ -22,7 +22,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/path_textview"
         android:textColor="@android:color/black"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintEnd_toStartOf="@+id/resLine"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolBar" />
@@ -38,7 +38,7 @@
         android:onClick="changePath"
         android:stateListAnimator="@animator/button_raise"
         android:text="@string/path_button"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintEnd_toStartOf="@+id/resLine"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pathView" />
@@ -53,7 +53,7 @@
         android:checked="false"
         android:enabled="false"
         android:text="@string/openchart_checkbox"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintEnd_toStartOf="@+id/resLine"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pathButton" />
@@ -67,7 +67,7 @@
         android:layout_marginTop="16dp"
         android:checked="true"
         android:text="@string/notfiy_checkbox"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintEnd_toStartOf="@+id/resLine"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/openCheck" />
@@ -81,13 +81,13 @@
         android:layout_marginTop="16dp"
         android:checked="true"
         android:text="@string/interior_checkbox"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintEnd_toStartOf="@+id/resLine"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/notfiyCheck" />
 
     <TextView
-        android:id="@+id/resView"
+        android:id="@+id/urlView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -95,7 +95,7 @@
         android:text="@string/res_view"
         android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintStart_toStartOf="@+id/resLine"
         app:layout_constraintTop_toBottomOf="@+id/toolBar" />
 
     <ListView
@@ -107,8 +107,8 @@
         android:choiceMode="singleChoice"
         app:layout_constraintBottom_toTopOf="@+id/removeButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline3"
-        app:layout_constraintTop_toBottomOf="@+id/resView" />
+        app:layout_constraintStart_toStartOf="@+id/resLine"
+        app:layout_constraintTop_toBottomOf="@+id/urlView" />
 
     <Button
         android:id="@+id/addButton"
@@ -120,7 +120,7 @@
         android:text="@string/add_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/removeButton"
-        app:layout_constraintStart_toStartOf="@+id/guideline3" />
+        app:layout_constraintStart_toStartOf="@+id/resLine" />
 
     <Button
         android:id="@+id/removeButton"
@@ -149,7 +149,7 @@
         app:layout_constraintStart_toEndOf="@+id/removeButton" />
 
     <android.support.constraint.Guideline
-        android:id="@+id/guideline3"
+        android:id="@+id/resLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"

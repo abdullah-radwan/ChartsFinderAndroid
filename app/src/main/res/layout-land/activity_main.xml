@@ -35,7 +35,7 @@
         android:ems="10"
         android:hint="@string/icaoedit_hint"
         android:inputType="text"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintEnd_toStartOf="@+id/viewerLine"
         app:layout_constraintStart_toEndOf="@+id/icaoView"
         app:layout_constraintTop_toBottomOf="@id/toolBar" />
 
@@ -50,7 +50,7 @@
         android:stateListAnimator="@animator/button_raise"
         android:text="@string/get_button"
         android:textSize="14sp"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintEnd_toStartOf="@+id/viewerLine"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/icaoView" />
 
@@ -82,7 +82,7 @@
         app:layout_constraintTop_toBottomOf="@+id/progressBar" />
 
     <android.support.constraint.Guideline
-        android:id="@+id/guideline2"
+        android:id="@+id/viewerLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -94,9 +94,18 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/chartSpinner"
         app:layout_constraintStart_toEndOf="@+id/fileView"
         app:layout_constraintTop_toTopOf="@+id/fileView" />
+
+    <Spinner
+        android:id="@+id/chartSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/fileSpinner" />
 
     <TextView
         android:id="@+id/fileView"
@@ -107,7 +116,7 @@
         android:text="@string/file_textview"
         android:textColor="@android:color/black"
         app:layout_constraintEnd_toStartOf="@+id/fileSpinner"
-        app:layout_constraintStart_toStartOf="@id/guideline2"
+        app:layout_constraintStart_toStartOf="@id/viewerLine"
         app:layout_constraintTop_toBottomOf="@+id/toolBar" />
 
     <com.github.barteksc.pdfviewer.PDFView

@@ -5,7 +5,7 @@
     <string name="icaoedit_hint">Separate with space</string>
     <string name="file_textview">Choose airport:</string>
     <string name="settings_menu">Settings</string>
-    <string name="openchart_checkbox">Open chart after download</string>
+    <string name="openchart_checkbox">Open chart</string>
     <string name="notfiy_checkbox">Show notifications</string>
     <string name="interior_checkbox">Use internal PDF viewer</string>
     <string name="path_button">Change path</string>
@@ -17,8 +17,8 @@
     <string name="url_textview">Enter URL:</string>
     <string name="path_textview">"Path: "</string>
     <string name="cancel_button">Cancel</string>
-    <string name="correctorder_message">Please enter correct order</string>
-    <string name="fillin_message">Please fill alll fields</string>
+    <string name="correctorder_message">Please enter a correct order</string>
+    <string name="fillin_message">Please fill all fields</string>
     <string name="downcomp_message">%s charts downloaded</string>
     <string name="downfail_message">Can\'t find %s charts</string>
     <string name="writefail_message">Can\'t write %s charts</string>
@@ -26,4 +26,6 @@
     <string name="fieldempty_message">Please enter an ICAO code</string>
     <string name="pdfreader_message">There isn\'t any PDF reader app installed</string>
     <string name="fileexist_message">%s charts already exists</string>
+    <string name="downfolder_message">Downloading %s %s chart…</string>
+    <string name="restype_textview">Choose type:</string>
 </resources>

@@ -9,10 +9,11 @@ import android.support.v4.app.NotificationCompat;
 
 class Notify {
 
-    private static final String NOTIFICATION_TAG = "Notify";
+    public static void notify(final Context context, final String text) {
 
-    public static void notify(final Context context, final String title, final String text) {
+        final String title = context.getResources().getString(R.string.app_name);
 
+        // Set builder
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"")
 
                 // Set appropriate defaults for the notification light, sound,
@@ -51,12 +52,19 @@ class Notify {
 
     private static void notify(final Context context, final Notification notification, final String title) {
 
+        // Get access to notifications service
         final NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        if (Build.VERSION.SDK_INT >= 26) {
-            nm.createNotificationChannel(new NotificationChannel("", title,NotificationManager.IMPORTANCE_DEFAULT));
-        }
+        try {
 
-        nm.notify(NOTIFICATION_TAG,0, notification);
+            // If Android O (Oreo) or above
+            if (Build.VERSION.SDK_INT >= 26) {
+                nm.createNotificationChannel(new NotificationChannel("Notify", title, NotificationManager.IMPORTANCE_DEFAULT));
+            }
+
+            // Start notify
+            nm.notify("Notify", 0, notification);
+
+        } catch (Exception ignored){}
     }
 }

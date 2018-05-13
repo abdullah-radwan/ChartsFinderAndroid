@@ -34,7 +34,7 @@
         android:ems="10"
         android:hint="@string/icaoedit_hint"
         android:inputType="text"
-        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintEnd_toStartOf="@+id/viewerLine"
         app:layout_constraintStart_toEndOf="@+id/icaoView"
         app:layout_constraintTop_toBottomOf="@id/toolBar" />
 
@@ -48,7 +48,7 @@
         android:stateListAnimator="@animator/button_raise"
         android:text="@string/get_button"
         android:textSize="14sp"
-        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintEnd_toStartOf="@+id/viewerLine"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/icaoView" />
 
@@ -62,7 +62,7 @@
         android:max="100"
         android:progress="0"
         android:visibility="gone"
-        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintEnd_toStartOf="@+id/viewerLine"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/getButton" />
 
@@ -72,10 +72,17 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:textSize="14sp"
-        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintEnd_toStartOf="@+id/viewerLine"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/viewerLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.35" />
 
     <Spinner
         android:id="@+id/fileSpinner"
@@ -83,9 +90,18 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginStart="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/chartSpinner"
         app:layout_constraintStart_toEndOf="@+id/fileView"
         app:layout_constraintTop_toTopOf="@+id/fileView" />
+
+    <Spinner
+        android:id="@+id/chartSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/fileSpinner" />
 
     <TextView
         android:id="@+id/fileView"
@@ -96,7 +112,7 @@
         android:text="@string/file_textview"
         android:textColor="@android:color/black"
         app:layout_constraintEnd_toStartOf="@+id/fileSpinner"
-        app:layout_constraintStart_toStartOf="@id/guideline"
+        app:layout_constraintStart_toStartOf="@id/viewerLine"
         app:layout_constraintTop_toBottomOf="@+id/toolBar" />
 
     <com.github.barteksc.pdfviewer.PDFView
@@ -109,7 +125,7 @@
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/viewerLine"
         app:layout_constraintTop_toBottomOf="@+id/fileSpinner" />
 
     <android.support.constraint.Group
@@ -118,12 +134,5 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         app:constraint_referenced_ids="fileSpinner, fileView, pdfView" />
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.35" />
 
 </android.support.constraint.ConstraintLayout>

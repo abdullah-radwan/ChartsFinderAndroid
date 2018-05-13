@@ -5,15 +5,24 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/resView"
+        android:id="@+id/urlView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="1dp"
         android:layout_marginStart="1dp"
         android:layout_marginTop="2dp"
         android:textColor="@android:color/black"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/typeView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="1dp"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/urlView" />
 
 </android.support.constraint.ConstraintLayout>
