@@ -45,7 +45,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         CheckBox notifyCheck = findViewById(R.id.notfiyCheck);
 
-        CheckBox interiorCheck = findViewById(R.id.interiorCheck);
+        final CheckBox interiorCheck = findViewById(R.id.interiorCheck);
 
         pathView = findViewById(R.id.pathView);
 
@@ -70,7 +70,7 @@ public class SettingsActivity extends AppCompatActivity {
         openCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                MainActivity.openChart = isChecked;}});
+                MainActivity.openChart = isChecked; interiorCheck.setEnabled(!isChecked);}});
 
         // Set checked
         notifyCheck.setChecked(MainActivity.showNotify);
@@ -81,6 +81,8 @@ public class SettingsActivity extends AppCompatActivity {
 
         // Set checked
         interiorCheck.setChecked(MainActivity.internalPDF);
+
+        interiorCheck.setEnabled(!MainActivity.openChart);
 
         // Set checked and open check enable
         interiorCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

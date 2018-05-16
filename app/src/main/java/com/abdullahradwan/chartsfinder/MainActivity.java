@@ -5,6 +5,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.StrictMode;
 import android.support.constraint.Group;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +21,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.listener.OnErrorListener;
 
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Spinner chartSpinner;
 
+    private PDFView pdfView;
+
     private Downloader downloader;
 
     static HashMap<String, ArrayList<FilesItems>> filesMap = new HashMap<>();
@@ -49,13 +55,11 @@ public class MainActivity extends AppCompatActivity {
 
     private static ArrayAdapter<String> chartSpinnerAdapter;
 
-    static ArrayList<String> chartSpinnerItems = new ArrayList<>();
+    private static ArrayList<String> chartSpinnerItems = new ArrayList<>();
 
     static String[] icaoCode;
 
     static String path;
-
-    static PDFView pdfView;
 
     static ArrayList<ResourcesItem> resources = new ArrayList<>();
 
@@ -81,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         // Show activity
         setContentView(R.layout.activity_main);
 
+        // Set Toolbar as action bar
         setSupportActionBar((Toolbar) findViewById(R.id.toolBar));
 
         // Set main objects
@@ -110,22 +115,37 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
+                final int filePos = position;
+
                 // Get chart from files ArrayList
 
                 // If chart type is normal
-                if(files.get(position).chartType.equals("Normal")) {
+                if(files.get(filePos).chartType.equals("Normal")) {
 
                     // Hide chart spinner
                     chartSpinner.setVisibility(View.GONE);
 
                     // Load pdf file from list
-                    pdfView.fromFile(files.get(position).chartFile).load();
+                    pdfView.fromFile(files.get(filePos).chartFile)
+                            // If file was removed
+                            .onError(new OnErrorListener() {
+                                @Override
+                                public void onError(Throwable t) {
 
-                }
+                                    // Remove from file list
+                                    files.remove(filePos);
 
-                else {
+                                    // Remove from spinner list
+                                    fileSpinnerItems.remove(filePos);
 
-                    // If it's folder chart
+                                    // Notify list changed
+                                    fileSpinnerAdapter.notifyDataSetChanged();
+                                }
+                            })
+                            .load();
+
+                // If it's folder chart
+                } else {
 
                     // Clear chart spinner items
                     chartSpinnerItems.clear();
@@ -133,18 +153,38 @@ public class MainActivity extends AppCompatActivity {
                     // Set ICAO code, to be used by chart spinner
                     spinnerIcaoCode = files.get(position).chartName;
 
-                    for(int i = 0; i < filesMap.get(spinnerIcaoCode).size(); i++){
+                    for (int i = 0; i < filesMap.get(spinnerIcaoCode).size(); i++) {
 
                         // Add child charts
                         chartSpinnerItems.add(filesMap.get(spinnerIcaoCode).get(i).chartName);
 
                     }
 
-                    // Notify adapter data has changed
-                    chartSpinnerAdapter.notifyDataSetChanged();
+                    // If chart spinner items isn't empty
+                    if(!chartSpinnerItems.isEmpty()){
 
-                    // Make it visible
-                    chartSpinner.setVisibility(View.VISIBLE);
+                        // Notify adapter data has changed
+                        chartSpinnerAdapter.notifyDataSetChanged();
+
+                        // Make it visible
+                        chartSpinner.setVisibility(View.VISIBLE);
+
+                    // If empty
+                    } else {
+
+                        // Remove ICAO from file list
+                        files.remove(filePos);
+
+                        // Remove from HashMap
+                        filesMap.remove(spinnerIcaoCode);
+
+                        // Remove from spinner list
+                        fileSpinnerItems.remove(filePos);
+
+                        // Refresh view
+                        fileSpinnerAdapter.notifyDataSetChanged();
+
+                    }
 
                 }
 
@@ -155,7 +195,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Set chart spinner
-
         // Make spinner with its list
         chartSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, chartSpinnerItems);
 
@@ -169,8 +208,27 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
+                final int filePos = position;
+
                 // Load pdf (using ICAO code) from HashMap
-                pdfView.fromFile(filesMap.get(spinnerIcaoCode).get(position).chartFile).load();
+                pdfView.fromFile(filesMap.get(spinnerIcaoCode).get(filePos).chartFile)
+                        // Chart file was removed
+                        .onError(new OnErrorListener() {
+                            @Override
+                            public void onError(Throwable t) {
+
+                                // Remove from files list in HashMap
+                                filesMap.get(spinnerIcaoCode).remove(filePos);
+
+                                // Remove from spinner items
+                                chartSpinnerItems.remove(filePos);
+
+                                // Refresh view
+                                chartSpinnerAdapter.notifyDataSetChanged();
+
+                            }
+                        })
+                        .load();
 
             }
 
@@ -178,14 +236,30 @@ public class MainActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        // Check write external storage permission is gave
+        if(Build.VERSION.SDK_INT>=21) {
+            // Check write external storage permission is gave
+            // If permission isn't granted
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    !=PackageManager.PERMISSION_GRANTED){
 
-        // If permission isn't granted
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                // Request it
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
 
-            // Request it
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+            }
 
+        }
+
+        // Allow using URI to open chart above API 24
+        if(Build.VERSION.SDK_INT>=24){
+
+            try{
+
+                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+
+                m.invoke(null);
+
+            } catch(Exception ignored){}
         }
 
         // Set internal pdf visibility
@@ -199,11 +273,20 @@ public class MainActivity extends AppCompatActivity {
 
     // On exit from the program
     @Override
-    protected void onStop() {super.onStop(); try{downloader.cancel = true;} catch (Exception ignored){} config.writeConfig(); }
+    protected void onStop() {
+
+        super.onStop();
+
+        try{downloader.cancel = true;} catch (Exception ignored){}
+
+        config.writeConfig();
+
+    }
 
     // Set menu bar
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {getMenuInflater().inflate(R.menu.menu_main,menu); return true;}
+    public boolean onCreateOptionsMenu(Menu menu) {getMenuInflater().inflate(R.menu.menu_main,menu);
+        return true;}
 
     // 'Get charts' button on click
     public void getChart(View view) {

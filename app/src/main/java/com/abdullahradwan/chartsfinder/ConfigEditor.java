@@ -50,11 +50,6 @@ class ConfigEditor {
 
         if(fileSpinnerItems!=null){MainActivity.fileSpinnerItems  = fileSpinnerItems;}
 
-        ArrayList<String> chartSpinnerItems = gson.fromJson(sharedPref.getString("chartSpinnerItems",""),
-                new TypeToken<List<String>>(){}.getType());
-
-        if(chartSpinnerItems!=null){MainActivity.chartSpinnerItems  = chartSpinnerItems;}
-
         // Get HashMap as string and convert it to HashMap
         HashMap<String, ArrayList<FilesItems>> filesMap = gson.fromJson(sharedPref.getString("filesMap",""),
                 new TypeToken<HashMap<String, ArrayList<FilesItems>>>(){}.getType());
@@ -83,8 +78,6 @@ class ConfigEditor {
         prefsEdit.putString("fileItems", gson.toJson(MainActivity.files));
 
         prefsEdit.putString("fileSpinnerItems", gson.toJson(MainActivity.fileSpinnerItems));
-
-        prefsEdit.putString("chartSpinnerItems", gson.toJson(MainActivity.chartSpinnerItems));
 
         // Convert HashMap to string
         prefsEdit.putString("filesMap", gson.toJson(MainActivity.filesMap));

@@ -24,8 +24,9 @@
     <string name="writefail_message">Can\'t write %s charts</string>
     <string name="downstart_message">Downloading %s charts…</string>
     <string name="fieldempty_message">Please enter an ICAO code</string>
-    <string name="pdfreader_message">There isn\'t any PDF reader app installed</string>
     <string name="fileexist_message">%s charts already exists</string>
     <string name="downfolder_message">Downloading %s %s chart…</string>
     <string name="restype_textview">Choose type:</string>
+    <string name="openpath_title">Choose file explorer:</string>
+    <string name="openfile_title">Choose PDF viewer:</string>
 </resources>

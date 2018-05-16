@@ -82,12 +82,10 @@
 
     <Spinner
         android:id="@+id/fileSpinner"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="8dp"
         android:visibility="visible"
-        app:layout_constraintEnd_toStartOf="@+id/chartSpinner"
         app:layout_constraintStart_toEndOf="@+id/fileView"
         app:layout_constraintTop_toTopOf="@+id/fileView" />
 
@@ -95,9 +93,9 @@
         android:id="@+id/chartSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/fileSpinner"
         app:layout_constraintTop_toTopOf="@+id/fileSpinner" />
 
     <TextView

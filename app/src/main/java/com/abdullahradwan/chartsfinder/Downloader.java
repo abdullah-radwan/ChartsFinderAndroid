@@ -9,9 +9,7 @@ import android.os.PowerManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -36,11 +34,11 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
 
     private final Button getButton;
 
-    private final Spinner chartSpinner;
-
-    private final ArrayList<FilesItems> chartItems = new ArrayList<>();
+    private ArrayList<FilesItems> chartItems = new ArrayList<>();
 
     private boolean cont = true;
+
+    private String message;
 
     private PowerManager.WakeLock wakeLock;
 
@@ -63,8 +61,6 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
 
         getButton = activity.findViewById(R.id.getButton);
 
-        chartSpinner = activity.findViewById(R.id.chartSpinner);
-
     }
 
     // Before run the download process
@@ -75,13 +71,13 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
         PowerManager pm = (PowerManager) activity.getSystemService(Context.POWER_SERVICE);
 
         // Lock the wakelock
-        try {
+        if(pm != null) {
 
             wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
 
             wakeLock.acquire(10 * 60 * 300L /*3 minutes*/);
 
-        } catch (Exception ignored){}
+        }
 
     }
 
@@ -89,14 +85,13 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
 
+        int x = 0;
+
         // For each airport in the list
-        for (String anIcaoCode : MainActivity.icaoCode) {
+        for (String anIcaoCode :  MainActivity.icaoCode) {
 
             // If the ICAO code isn't empty
             if(!anIcaoCode.equals("")) {
-
-                // Call download start
-                editActivity("downStart", anIcaoCode,null, null);
 
                 // Try to download chart per each resource
                 for (int i = 0; i < MainActivity.resources.size(); i++) {
@@ -106,18 +101,20 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
 
                         try {
 
-                            // Connect to Jsoup, well release an exception if the URL is wrong
-
-                            Document doc = Jsoup.connect(String.format(MainActivity.resources.get(i).url, anIcaoCode)).get();
-
                             // Set folder on ICAO code
                             File folder = new File(MainActivity.path + "/" + anIcaoCode);
 
-                            // If folder isn't exists and the chart isn't in the files list (maybe exists on another path)
-                            if (!folder.exists() && check_avail(anIcaoCode)) {
+                            // If folder isn't exists
+                            if (!folder.exists()) {
+
+                                // Connect to Jsoup, wll release an exception if the URL is wrong
+                                Document doc = Jsoup.connect(String.format(MainActivity.resources.get(i).url, anIcaoCode)).get();
 
                                 // Make directory
                                 folder.mkdir();
+
+                                // Call download start
+                                editActivity("downStart", anIcaoCode,null, null);
 
                                 // For every thing in the HTML page
                                 for (Element element : doc.select("a")) {
@@ -235,7 +232,7 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
                                 break;
 
                             // Chart exists
-                            } else {editActivity("folderExist",anIcaoCode,null, null); cont = false; break;}
+                            } else {editActivity("folderExist",anIcaoCode,null, folder); cont = false; break;}
 
                         // Problem in URL, will pass to the next one
                         } catch (Exception ignored){
@@ -255,28 +252,31 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
                         // Set file name
                         String fileName = String.format("/%s.pdf", anIcaoCode);
 
-                        try {
+                        // Set file
+                        File file = new File(MainActivity.path + "/" + fileName);
 
-                            // Make URL from resource
-                            URL url = new URL(String.format(MainActivity.resources.get(i).url, anIcaoCode));
+                        // If file isn't exists in the path
+                        if (!file.exists()) {
 
-                            // Open connection
-                            connection = (HttpURLConnection) url.openConnection();
+                            try {
 
-                            // Connect to server
-                            connection.connect();
+                                // Call download start
+                                editActivity("downStart", anIcaoCode,null, null);
 
-                            // If file ready to download
-                            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                                // Make URL from resource
+                                URL url = new URL(String.format(MainActivity.resources.get(i).url, anIcaoCode));
 
-                                // Open input stream
-                                input = connection.getInputStream();
+                                // Open connection
+                                connection = (HttpURLConnection) url.openConnection();
 
-                                // Set file
-                                File file = new File(MainActivity.path + "/" + fileName);
+                                // Connect to server
+                                connection.connect();
 
-                                // If file isn't exists in the path and files list
-                                if (!file.exists() && check_avail(anIcaoCode)) {
+                                // If file ready to download
+                                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+
+                                    // Open input stream
+                                    input = connection.getInputStream();
 
                                     //Open output stream
                                     output = new FileOutputStream(file);
@@ -293,7 +293,7 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
                                     while ((count = input.read(data)) != -1) {
 
                                         // If canceled
-                                        if(cancel){break;}
+                                        if (cancel) {break;}
 
                                         total += count;
 
@@ -307,7 +307,7 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
 
                                     }
 
-                                    if(cancel){
+                                    if (cancel) {
 
                                         // Close streams
                                         input.close();
@@ -333,65 +333,73 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
                                     cont = false;
 
                                     // Finish download
-                                    editActivity("downComp", anIcaoCode,null, file);
-
-                                    break;
-
-                                } else {
-
-                                    // File exists
-
-                                    editActivity("fileExist", anIcaoCode,null, file);
-
-                                    cont = false;
+                                    editActivity("downComp", anIcaoCode, null, file);
 
                                     break;
 
                                 }
 
+                            // Can't write file, maybe permission is denied
+                            } catch (Exception ex) {
+
+                                editActivity("writeFail", anIcaoCode, null, null);
+
+                                cont = false;
+
+                                break;
+
+                            // Confirm streams is closed
+                            } finally {
+                                try {
+
+                                    input.close();
+
+                                    output.close();
+
+                                    connection.disconnect();
+
+                                } catch (Exception ignored) {}
+
                             }
 
-                        } catch (Exception ex) {
+                        // File exists
+                        } else {
 
-                            // Can't write file, maybe permission is denied
-                            editActivity("writeFail", anIcaoCode, null, null);
+                            editActivity("fileExist", anIcaoCode,null, file);
 
                             cont = false;
 
                             break;
 
-                        // Confirm streams is closed
-                        } finally {
-                            try {
-
-                                input.close();
-
-                                output.close();
-
-                                connection.disconnect();
-
-                            } catch (Exception ignored) {}
-
                         }
+
                     }
 
                 }
 
-                // Break the final loop if process canceled
+                // Break the airports loop if process canceled
                 if(cancel){break;}
 
                 // Resources over and chart not found
                 if (cont) {editActivity("downFail", anIcaoCode, null, null);}
 
-                // Wait 3 seconds before download the next ICAO code
-                try {Thread.sleep(3000);} catch (Exception ignored) {}
+                ++x;
+
+                try {
+                    // Check if there is another airport, if so; no need to delay
+                    String a = MainActivity.icaoCode[x];
+
+                    // Wait 2 seconds before download the next ICAO code
+                    Thread.sleep(2000);
+
+                } catch (Exception ignored) {}
+
+                editActivity("downFinish", null, null, null);
 
             // ICAO code is empty
             } else{editActivity("fieldEmpty",null,null, null);}
 
         }
-
-        editActivity("downFinish", null,null,null);
 
         return null;
 
@@ -433,7 +441,7 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
                     case "downStart":
 
                         // Clear file items list
-                        chartItems.clear();
+                        chartItems = new ArrayList<>();
 
                         // Disable 'Get charts' button
                         getButton.setEnabled(false);
@@ -471,41 +479,31 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
                     // Normal resource download finished
                     case "downComp":
 
-                        downloadView.setText(String.format(activity.getResources().getString(R.string.downcomp_message),icaoCode));
+                        message = String.format(activity.getResources().getString(R.string.downcomp_message),icaoCode);
 
-                        if(MainActivity.showNotify){Notify.notify(activity,
-                                String.format(activity.getResources().getString(R.string.downcomp_message),icaoCode));}
+                        // Add file to file menu
+                        if(MainActivity.internalPDF){addFile(icaoCode, "Normal", chartFile);}
 
-                        if(MainActivity.internalPDF){
+                        if(MainActivity.openChart){openPath(chartFile, "openFile");}
 
-                            // Add file to file menu
-                            MainActivity.files.add(0, new FilesItems(icaoCode, "Normal", chartFile));
+                        break;
 
-                            // Add to file spinner list
-                            MainActivity.fileSpinnerItems.add(0, icaoCode);
+                    case "downFinish":
 
-                            // Update adapter
-                            MainActivity.fileSpinnerAdapter.notifyDataSetChanged();
+                        bar.setVisibility(View.GONE);
 
-                            // Hide file spinner
-                            chartSpinner.setVisibility(View.GONE);
+                        getButton.setEnabled(true);
 
-                            // Show file in pdf viewer
-                            MainActivity.pdfView.fromFile(chartFile).load();
+                        downloadView.setText(message);
 
-                        }
-
-                        if(MainActivity.openChart){openChart(chartFile);}
+                        if(MainActivity.showNotify){Notify.notify(activity, message);}
 
                         break;
 
                     // Finish download folder charts
                     case "folderFinish":
 
-                        downloadView.setText(String.format(activity.getResources().getString(R.string.downcomp_message),icaoCode));
-
-                        if(MainActivity.showNotify){Notify.notify(activity,
-                                String.format(activity.getResources().getString(R.string.downcomp_message),icaoCode));}
+                        message = String.format(activity.getResources().getString(R.string.downcomp_message),icaoCode);
 
                         if(MainActivity.internalPDF){
 
@@ -516,19 +514,18 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
                             MainActivity.filesMap.put(icaoCode, list);
 
                             // Add chart to files and set type to folder
-                            MainActivity.files.add(0,new FilesItems(icaoCode, "Folder", null));
-
-                            // Add chart to spinner
-                            MainActivity.fileSpinnerItems.add(0,icaoCode);
-
-                            MainActivity.fileSpinnerAdapter.notifyDataSetChanged();
+                            addFile(icaoCode, "Folder", null);
 
                         }
+
+                        if(MainActivity.openChart){openPath(chartFile, "openPath");}
 
                         break;
 
                     // If chart is exists
                     case "fileExist":
+
+                        message = String.format(activity.getResources().getString(R.string.fileexist_message),icaoCode);
 
                         if(MainActivity.internalPDF) {
 
@@ -536,65 +533,72 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
                             if(check_avail(icaoCode)) {
 
                                 // Add to file list
-                                MainActivity.files.add(0, new FilesItems(icaoCode, "Normal", chartFile));
-
-                                MainActivity.fileSpinnerItems.add(0, icaoCode);
-
-                                MainActivity.fileSpinnerAdapter.notifyDataSetChanged();
-
-                                chartSpinner.setVisibility(View.GONE);
-
-                                MainActivity.pdfView.fromFile(chartFile).load();
+                                addFile(icaoCode, "Normal", chartFile);
 
                             }
 
                         }
 
-                        if(MainActivity.openChart){
+                        // Open chart
+                        if(MainActivity.openChart){openPath(chartFile, "openFile");}
 
-                            // Open chart
-                            if(check_avail(icaoCode)){openChart(chartFile);}
-
-                        }
+                        break;
 
                     // Charts exists for folder, it won't added to files spinner
                     case "folderExist":
 
                         // Set TextView
-                        downloadView.setText(String.format(activity.getResources().getString(R.string.fileexist_message),icaoCode));
+                        message = String.format(activity.getResources().getString(R.string.fileexist_message),icaoCode);
 
-                        // If notification is enabled
-                        if(MainActivity.showNotify){Notify.notify(activity,
-                                String.format(activity.getResources().getString(R.string.fileexist_message),icaoCode));}
+                        if(MainActivity.internalPDF) {
+
+                            if (check_avail(icaoCode)) {
+
+                                File[] files = chartFile.listFiles();
+
+                                for (File file : files) {
+
+                                    if (file.toString().endsWith(".pdf")) {
+
+                                        String chartName = file.getName().substring(0, file.getName().length() - 4);
+
+                                        chartItems.add(new FilesItems(chartName, null, file));
+
+                                    }
+
+                                }
+
+                                if(!chartItems.isEmpty()) {
+
+                                    // Make instance of chartItems
+                                    ArrayList<FilesItems> listFolder = chartItems;
+
+                                    // Put the ICAO code and files ArrayList
+                                    MainActivity.filesMap.put(icaoCode, listFolder);
+
+                                    addFile(icaoCode, "Folder", null);
+
+                                }
+
+                            }
+
+                        }
+
+                        if(MainActivity.openChart){openPath(chartFile, "openPath");}
 
                         break;
 
                     // Charts not found
                     case "downFail":
 
-                        downloadView.setText(String.format(activity.getResources().getString(R.string.downfail_message),icaoCode));
-
-                        if(MainActivity.showNotify){Notify.notify(activity,
-                                String.format(activity.getResources().getString(R.string.downfail_message),icaoCode));}
+                        message = String.format(activity.getResources().getString(R.string.downfail_message),icaoCode);
 
                         break;
 
                     // Error in write charts
                     case "writeFail":
 
-                        downloadView.setText(String.format(activity.getResources().getString(R.string.writefail_message),icaoCode));
-
-                        if(MainActivity.showNotify){Notify.notify(activity,
-                                String.format(activity.getResources().getString(R.string.writefail_message),icaoCode));}
-
-                        break;
-
-                    // the whole download process finished
-                    case "downFinish":
-
-                        bar.setVisibility(View.GONE);
-
-                        getButton.setEnabled(true);
+                        message = String.format(activity.getResources().getString(R.string.writefail_message),icaoCode);
 
                         break;
 
@@ -629,26 +633,51 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
 
     }
 
+    private static void addFile(String icaoCode, String type, File file){
+
+        // Add chart to files and set type to folder
+        MainActivity.files.add(0, new FilesItems(icaoCode, type, file));
+
+        // Add chart to spinner
+        MainActivity.fileSpinnerItems.add(0, icaoCode);
+
+        MainActivity.fileSpinnerAdapter.notifyDataSetChanged();
+
+    }
+
     // Open chart after download
-    private void openChart(File chartFile){
+    private void openPath(File chartFile, String op){
 
         // Set intent
         Intent target = new Intent(Intent.ACTION_VIEW);
 
-        // Set action to view pdf and path
-        target.setDataAndType(Uri.fromFile(chartFile),"application/pdf");
+        String type;
 
-        target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        String title;
+
+        if(op.equals("openFile")) {
+
+            type = "application/pdf";
+
+            title = activity.getResources().getString(R.string.openfile_title);
+
+        } else {
+
+            type = "resource/folder";
+
+            title = activity.getResources().getString(R.string.openpath_title);
+
+        }
+
+        // Set action and path
+        target.setDataAndType(Uri.fromFile(chartFile), type);
 
         // Set final intent
-        Intent intent = Intent.createChooser(target, "Open File");
+        Intent intent = Intent.createChooser(target, title);
 
         // Start intent
-        try {
-            activity.startActivity(intent);
-        // If no app installed
-        } catch (Exception e) {
-            Toast.makeText(activity,activity.getResources().getString(R.string.pdfreader_message),Toast.LENGTH_SHORT).show();}
+        activity.startActivity(intent);
+
     }
 
 }

@@ -94,10 +94,14 @@ public class AddResDialog extends DialogFragment {
 
                                 // If order is more than the list item or lower than 0
                                 } else {
-                                    Toast.makeText(getActivity(), getResources().getString(R.string.correctorder_message), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), getResources().getString(R.string.correctorder_message),
+                                            Toast.LENGTH_SHORT).show();
                                 }
                             // If order can't casted to integer
-                            } catch (Exception ex){Toast.makeText(getActivity(), getResources().getString(R.string.correctorder_message), Toast.LENGTH_SHORT).show();}
+                            } catch (Exception ex){
+                                Toast.makeText(getActivity(), getResources().getString(R.string.correctorder_message),
+                                    Toast.LENGTH_SHORT).show();
+                            }
 
                         // If one of the fields is empty
                         } else{Toast.makeText(getActivity(),getResources().getString(R.string.fillin_message), Toast.LENGTH_SHORT).show();}}})

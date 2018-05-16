@@ -14,7 +14,7 @@ class Notify {
         final String title = context.getResources().getString(R.string.app_name);
 
         // Set builder
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"")
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"charts-finder")
 
                 // Set appropriate defaults for the notification light, sound,
                 // and vibration.
@@ -59,11 +59,12 @@ class Notify {
 
             // If Android O (Oreo) or above
             if (Build.VERSION.SDK_INT >= 26) {
-                nm.createNotificationChannel(new NotificationChannel("Notify", title, NotificationManager.IMPORTANCE_DEFAULT));
+                nm.createNotificationChannel(new NotificationChannel("charts-finder", title,
+                        NotificationManager.IMPORTANCE_DEFAULT));
             }
 
             // Start notify
-            nm.notify("Notify", 0, notification);
+            nm.notify("charts-finder", 0, notification);
 
         } catch (Exception ignored){}
     }

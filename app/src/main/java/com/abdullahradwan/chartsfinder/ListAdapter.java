@@ -17,7 +17,8 @@ class ListAdapter extends BaseAdapter {
     private final Activity activity;
 
     // Get activity and resources list
-    ListAdapter(Activity activity, ArrayList<ResourcesItem> items){this.activity = activity; this.items = items;}
+    ListAdapter(Activity activity, ArrayList<ResourcesItem> items){this.activity = activity;
+        this.items = items;}
 
     @Override
     public int getCount() {return items.size();}
