@@ -32,7 +32,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/urlView"
+        android:id="@+id/resView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -51,7 +51,7 @@
         android:ems="10"
         android:inputType="textUri"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/urlView"
+        app:layout_constraintStart_toEndOf="@+id/resView"
         app:layout_constraintTop_toBottomOf="@+id/orderEdit" />
 
     <TextView
@@ -62,7 +62,7 @@
         android:layout_marginTop="40dp"
         android:text="@string/restype_textview"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/urlView" />
+        app:layout_constraintTop_toBottomOf="@+id/resView" />
 
     <Spinner
         android:id="@+id/typeSpinner"

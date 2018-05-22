@@ -40,7 +40,7 @@ class ListAdapter extends BaseAdapter {
         View view = inflater.inflate(R.layout.list_item, null);
 
         // Get TextViews
-        TextView urlView = view.findViewById(R.id.urlView);
+        TextView urlView = view.findViewById(R.id.resView);
 
         TextView typeView = view.findViewById(R.id.typeView);
 

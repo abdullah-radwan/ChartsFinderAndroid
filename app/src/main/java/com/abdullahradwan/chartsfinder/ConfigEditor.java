@@ -22,39 +22,45 @@ class ConfigEditor {
 
     void readConfig(){
 
-        // Set variables
-        MainActivity.showNotify = sharedPref.getBoolean("showNotify", true);
+        try {
 
-        MainActivity.openChart = sharedPref.getBoolean("openChart", false);
+            // Set variables
+            MainActivity.showNotify = sharedPref.getBoolean("showNotify", true);
 
-        MainActivity.internalPDF = sharedPref.getBoolean("interiorPDF",true);
+            MainActivity.openChart = sharedPref.getBoolean("openChart", false);
 
-        // Set default value to downloads folder
-        MainActivity.path = sharedPref.getString("path",
-                String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)));
+            MainActivity.internalPDF = sharedPref.getBoolean("interiorPDF", true);
 
-        // Get array as string and convert it to ArrayList
-        ArrayList<ResourcesItem> resItems = gson.fromJson(sharedPref.getString("resItems",""),
-                new TypeToken<List<ResourcesItem>>(){}.getType());
+            MainActivity.modifyRes = sharedPref.getBoolean("modifyRes", false);
 
-        // If there is a list
-        if(resItems!=null){MainActivity.resources  = resItems;} else{MainActivity.resetRes();}
+            // Set default value to downloads folder
+            MainActivity.path = sharedPref.getString("path",
+                    String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)));
 
-        ArrayList<FilesItems> fileItems = gson.fromJson(sharedPref.getString("fileItems",""),
-                new TypeToken<List<FilesItems>>(){}.getType());
+            // Get array as string and convert it to ArrayList
+            ArrayList<ResourcesItem> resItems = gson.fromJson(sharedPref.getString("resItems", ""),
+                    new TypeToken<List<ResourcesItem>>() {}.getType());
 
-        if(fileItems!=null){MainActivity.files  = fileItems;}
+            // If there is a list
+            if (resItems != null) {MainActivity.resources = resItems;} else {MainActivity.resetRes();}
 
-        ArrayList<String> fileSpinnerItems = gson.fromJson(sharedPref.getString("fileSpinnerItems",""),
-                new TypeToken<List<String>>(){}.getType());
+            ArrayList<FilesItems> fileItems = gson.fromJson(sharedPref.getString("fileItems", ""),
+                    new TypeToken<List<FilesItems>>() {}.getType());
 
-        if(fileSpinnerItems!=null){MainActivity.fileSpinnerItems  = fileSpinnerItems;}
+            if (fileItems != null) { MainActivity.files = fileItems;}
 
-        // Get HashMap as string and convert it to HashMap
-        HashMap<String, ArrayList<FilesItems>> filesMap = gson.fromJson(sharedPref.getString("filesMap",""),
-                new TypeToken<HashMap<String, ArrayList<FilesItems>>>(){}.getType());
+            ArrayList<String> fileSpinnerItems = gson.fromJson(sharedPref.getString("fileSpinnerItems", ""),
+                    new TypeToken<List<String>>() {}.getType());
 
-        if(filesMap!=null){MainActivity.filesMap = filesMap;}
+            if (fileSpinnerItems != null) {MainActivity.fileSpinnerItems = fileSpinnerItems;}
+
+            // Get HashMap as string and convert it to HashMap
+            HashMap<String, ArrayList<FilesItems>> filesMap = gson.fromJson(sharedPref.getString("filesMap", ""),
+                    new TypeToken<HashMap<String, ArrayList<FilesItems>>>() {}.getType());
+
+            if (filesMap != null) {MainActivity.filesMap = filesMap;}
+
+        } catch (Exception ex){MainActivity.resetRes();}
 
     }
 
@@ -69,6 +75,8 @@ class ConfigEditor {
         prefsEdit.putBoolean("openChart", MainActivity.openChart);
 
         prefsEdit.putBoolean("interiorPDF", MainActivity.internalPDF);
+
+        prefsEdit.putBoolean("modifyRes", MainActivity.modifyRes);
 
         prefsEdit.putString("path", MainActivity.path);
 

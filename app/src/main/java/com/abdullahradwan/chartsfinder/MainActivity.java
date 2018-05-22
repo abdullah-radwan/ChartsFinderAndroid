@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.StrictMode;
 import android.support.constraint.Group;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -47,15 +48,15 @@ public class MainActivity extends AppCompatActivity {
 
     private Downloader downloader;
 
+    private static final ArrayList<String> chartSpinnerItems = new ArrayList<>();
+
+    private static ArrayAdapter<String> chartSpinnerAdapter;
+
     static HashMap<String, ArrayList<FilesItems>> filesMap = new HashMap<>();
 
     static ArrayAdapter<String> fileSpinnerAdapter;
 
     static ArrayList<String> fileSpinnerItems = new ArrayList<>();
-
-    private static ArrayAdapter<String> chartSpinnerAdapter;
-
-    private static ArrayList<String> chartSpinnerItems = new ArrayList<>();
 
     static String[] icaoCode;
 
@@ -65,11 +66,13 @@ public class MainActivity extends AppCompatActivity {
 
     static ArrayList<FilesItems> files = new ArrayList<>();
 
-    static boolean showNotify;
+    static boolean showNotify = true;
 
-    static boolean openChart;
+    static boolean openChart = false;
 
-    static boolean internalPDF;
+    static boolean internalPDF = true;
+
+    static boolean modifyRes = false;
 
     // On start
     @Override
@@ -237,7 +240,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         if(Build.VERSION.SDK_INT>=21) {
-            // Check write external storage permission is gave
+
+            // Check if write external storage permission is gave
+
             // If permission isn't granted
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     !=PackageManager.PERMISSION_GRANTED){
@@ -285,8 +290,13 @@ public class MainActivity extends AppCompatActivity {
 
     // Set menu bar
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {getMenuInflater().inflate(R.menu.menu_main,menu);
-        return true;}
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.menu_main,menu);
+
+        return true;
+
+    }
 
     // 'Get charts' button on click
     public void getChart(View view) {
@@ -301,6 +311,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // Cancel button on click
+    public void cancelDown(View view) {view.setEnabled(false); downloader.cancel = true;}
+
     // 'Settings' menu item on click
     public void showSettings(MenuItem item) {
 
@@ -309,6 +322,19 @@ public class MainActivity extends AppCompatActivity {
 
         // Set animation
         overridePendingTransition(R.anim.enter, R.anim.exit);
+
+    }
+
+    public void showAbout(MenuItem item) {
+
+        View aboutView = getLayoutInflater().inflate(R.layout.dialog_about, null);
+
+        new AlertDialog.Builder(this)
+                .setIcon(R.mipmap.ic_launcher)
+                .setTitle(R.string.app_name)
+                .setView(aboutView)
+                .create()
+                .show();
 
     }
 

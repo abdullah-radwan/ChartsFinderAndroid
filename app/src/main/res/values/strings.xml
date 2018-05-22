@@ -29,4 +29,10 @@
     <string name="restype_textview">Choose type:</string>
     <string name="openpath_title">Choose file explorer:</string>
     <string name="openfile_title">Choose PDF viewer:</string>
+    <string name="downcancel_message">Download canceled</string>
+    <string name="about_menu">About</string>
+    <string name="about_desp">Version: 1.0.3\nBuild date: May 2018\nCheck for updates here: <a href="http://bit.ly/2IVtRIn">http://bit.ly/2IVtRIn</a></string>
+    <string name="about_credits">Copyright © Abdullah Radwan\nContact: <a href="mailto:abbodmar@gmail.com?subject=Charts%20Finder">abbodmar@gmail.com</a></string>
+    <string name="modifyres_checkbox">Modify resources</string>
+    <string name="search_message">Searching for %s charts…</string>
 </resources>

@@ -72,16 +72,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/notfiyCheck" />
 
-    <TextView
-        android:id="@+id/urlView"
+    <CheckBox
+        android:id="@+id/resCheck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:checked="false"
+        android:text="@string/modifyres_checkbox"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/interiorCheck" />
+
+    <TextView
+        android:id="@+id/resView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/res_view"
         android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/interiorCheck" />
+        app:layout_constraintTop_toBottomOf="@+id/resCheck" />
 
     <ListView
         android:id="@+id/resList"
@@ -96,7 +106,7 @@
         app:layout_constraintBottom_toTopOf="@+id/removeButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/urlView" />
+        app:layout_constraintTop_toBottomOf="@+id/resView" />
 
     <Button
         android:id="@+id/addButton"
@@ -136,4 +146,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/removeButton" />
+
+    <android.support.constraint.Group
+        android:id="@+id/resGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="resView, resList, addButton, removeButton, resetButton" />
+
 </android.support.constraint.ConstraintLayout>

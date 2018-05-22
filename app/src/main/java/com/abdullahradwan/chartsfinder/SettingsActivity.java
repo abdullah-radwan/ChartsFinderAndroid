@@ -3,6 +3,7 @@ package com.abdullahradwan.chartsfinder;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.Group;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -29,6 +30,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     private int itemPos;
 
+    private Group resGroup;
+
     // On start
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,13 +50,18 @@ public class SettingsActivity extends AppCompatActivity {
 
         final CheckBox interiorCheck = findViewById(R.id.interiorCheck);
 
+        CheckBox resCheck = findViewById(R.id.resCheck);
+
         pathView = findViewById(R.id.pathView);
 
         ListView listView = findViewById(R.id.resList);
 
         removeButton = findViewById(R.id.removeButton);
 
-        pathView = findViewById(R.id.pathView);
+        resGroup = findViewById(R.id.resGroup);
+
+        // Set group visibility on start
+        setResGroup();
 
         // Set path TextView
         pathView.setText(getResources().getString(R.string.path_textview) + MainActivity.path);
@@ -90,6 +98,21 @@ public class SettingsActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {MainActivity.internalPDF = isChecked;
             openCheck.setEnabled(!isChecked);}});
 
+        // Set checked
+        resCheck.setChecked(MainActivity.modifyRes);
+
+        // Set group visibility when change
+        resCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                MainActivity.modifyRes = isChecked;
+
+                setResGroup();
+
+            }
+        });
+
         // Link ListView to adapter
         listView.setAdapter(adapter);
 
@@ -105,7 +128,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         // Set directory chooser dialog
         DirectoryChooserConfig config = DirectoryChooserConfig.builder()
-                .newDirectoryName("")
+                .newDirectoryName("Charts")
                 .allowNewDirectoryNameModification(true)
                 .build();
 
@@ -173,6 +196,15 @@ public class SettingsActivity extends AppCompatActivity {
         MainActivity.resetRes();
 
         adapter.notifyDataSetChanged();
+
+    }
+
+    // Set resource's group visibility
+    private void setResGroup(){
+
+        if (MainActivity.modifyRes){resGroup.setVisibility(View.VISIBLE);}
+
+        else {resGroup.setVisibility(View.GONE);}
 
     }
 

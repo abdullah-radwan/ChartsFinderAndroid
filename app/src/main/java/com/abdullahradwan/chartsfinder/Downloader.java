@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.PowerManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -33,6 +34,10 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
     private final TextView downloadView;
 
     private final Button getButton;
+
+    private final Button cancelButton;
+
+    private final EditText icaoEdit;
 
     private ArrayList<FilesItems> chartItems = new ArrayList<>();
 
@@ -61,6 +66,10 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
 
         getButton = activity.findViewById(R.id.getButton);
 
+        cancelButton = activity.findViewById(R.id.cancelButton);
+
+        icaoEdit = activity.findViewById(R.id.icaoEdit);
+
     }
 
     // Before run the download process
@@ -85,19 +94,25 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
 
-        int x = 0;
+        int airport = 0;
 
         // For each airport in the list
         for (String anIcaoCode :  MainActivity.icaoCode) {
 
             // If the ICAO code isn't empty
-            if(!anIcaoCode.equals("")) {
+            if(!anIcaoCode.isEmpty()) {
+
+                editActivity("searchStart", anIcaoCode, null, null);
+
+                boolean startCalled = false;
 
                 // Try to download chart per each resource
-                for (int i = 0; i < MainActivity.resources.size(); i++) {
+                for (int resource = 0; resource < MainActivity.resources.size(); resource++) {
+
+                    if (cancel) {break;}
 
                     // If resource is a folder resource
-                    if (MainActivity.resources.get(i).urlType.equals("Folder")) {
+                    if (MainActivity.resources.get(resource).urlType.equals("Folder")) {
 
                         try {
 
@@ -107,16 +122,16 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
                             // If folder isn't exists
                             if (!folder.exists()) {
 
-                                // Connect to Jsoup, wll release an exception if the URL is wrong
-                                Document doc = Jsoup.connect(String.format(MainActivity.resources.get(i).url, anIcaoCode)).get();
+                                // Connect to Jsoup, will release an exception if the URL is wrong
+                                Document doc = Jsoup.connect(String.format(
+                                        MainActivity.resources.get(resource).url, anIcaoCode)).get();
 
                                 // Make directory
                                 folder.mkdir();
 
-                                // Call download start
-                                editActivity("downStart", anIcaoCode,null, null);
+                                int notify = 0;
 
-                                // For every thing in the HTML page
+                                // For each item in the HTML page
                                 for (Element element : doc.select("a")) {
 
                                     // If it's a URL (href)
@@ -124,12 +139,6 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
 
                                     // If it ends with .pdf
                                     if (fileName.endsWith(".pdf")) {
-
-                                        // Set chart name by remove '.pdf'
-                                        String chartName = fileName.substring(0, fileName.length() - 4);
-
-                                        // Start folder download, one per chart
-                                        editActivity("downFolder", anIcaoCode, chartName, null);
 
                                         // Make URL from full link 'abs'
                                         URL url = new URL(element.attr("abs:href"));
@@ -142,6 +151,21 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
 
                                         // File is exists and ready to download
                                         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+
+                                            // Call download start
+                                            if (notify == 0 && !startCalled) {
+
+                                                editActivity("downStart", anIcaoCode, null, null);
+
+                                                startCalled = true;
+
+                                            }
+
+                                            // Set chart name by remove last four chars (.pdf)
+                                            String chartName = fileName.substring(0, fileName.length() - 4);
+
+                                            // Start folder download, one per chart
+                                            editActivity("downFolder", anIcaoCode, chartName, null);
 
                                             // Open input stream
                                             input = connection.getInputStream();
@@ -220,6 +244,8 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
                                     }
                                 }
 
+                                if (cancel){break;}
+
                                 // After all charts is downloaded
 
                                 // Set continue to false
@@ -260,11 +286,9 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
 
                             try {
 
-                                // Call download start
-                                editActivity("downStart", anIcaoCode,null, null);
-
                                 // Make URL from resource
-                                URL url = new URL(String.format(MainActivity.resources.get(i).url, anIcaoCode));
+                                URL url = new URL(String.format(
+                                        MainActivity.resources.get(resource).url, anIcaoCode));
 
                                 // Open connection
                                 connection = (HttpURLConnection) url.openConnection();
@@ -274,6 +298,9 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
 
                                 // If file ready to download
                                 if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+
+                                    // Call download start
+                                    editActivity("downStart", anIcaoCode,null, null);
 
                                     // Open input stream
                                     input = connection.getInputStream();
@@ -378,23 +405,29 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
                 }
 
                 // Break the airports loop if process canceled
-                if(cancel){break;}
+                if(cancel){
+
+                    editActivity("downCancel", null, null, null);
+
+                    break;
+
+                }
 
                 // Resources over and chart not found
                 if (cont) {editActivity("downFail", anIcaoCode, null, null);}
 
-                ++x;
+                editActivity("downFinish", null, null, null);
+
+                ++airport;
 
                 try {
                     // Check if there is another airport, if so; no need to delay
-                    String a = MainActivity.icaoCode[x];
+                    String a = MainActivity.icaoCode[airport];
 
-                    // Wait 2 seconds before download the next ICAO code
-                    Thread.sleep(2000);
+                    // Wait 3 seconds before download the next ICAO code
+                    Thread.sleep(3000);
 
                 } catch (Exception ignored) {}
-
-                editActivity("downFinish", null, null, null);
 
             // ICAO code is empty
             } else{editActivity("fieldEmpty",null,null, null);}
@@ -418,10 +451,17 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
 
     // After download, release wakelock
     @Override
-    protected void onPostExecute(Void aVoid) {super.onPostExecute(aVoid); try{wakeLock.release();} catch (Exception ignored){}}
+    protected void onPostExecute(Void aVoid) {
+
+        super.onPostExecute(aVoid);
+
+        try{wakeLock.release();} catch (Exception ignored){}
+
+    }
 
     // Edit activity, operations on GUI
-    private void editActivity(final String op, final String icaoCode, final String chartName, final File chartFile){
+    private void editActivity(final String op, final String icaoCode, final String chartName,
+                              final File chartFile){
 
         // Run on GUI thread
         activity.runOnUiThread(new Runnable() {
@@ -437,14 +477,27 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
 
                         break;
 
-                    // Download started
-                    case "downStart":
+                    // Searching for charts
+                    case "searchStart":
+
+                        downloadView.setText(String.format(activity.getResources().getString(R.string.search_message), icaoCode));
 
                         // Clear file items list
                         chartItems = new ArrayList<>();
 
-                        // Disable 'Get charts' button
-                        getButton.setEnabled(false);
+                        // Hide 'Get charts' button
+                        getButton.setVisibility(View.INVISIBLE);
+
+                        // View cancel button
+                        cancelButton.setVisibility(View.VISIBLE);
+
+                        // Disable edit text
+                        icaoEdit.setEnabled(false);
+
+                        break;
+
+                    // Download started
+                    case "downStart":
 
                         downloadView.setText(String.format(activity.getResources().getString(R.string.downstart_message),icaoCode));
 
@@ -492,7 +545,11 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
 
                         bar.setVisibility(View.GONE);
 
-                        getButton.setEnabled(true);
+                        getButton.setVisibility(View.VISIBLE);
+
+                        cancelButton.setVisibility(View.GONE);
+
+                        icaoEdit.setEnabled(true);
 
                         downloadView.setText(message);
 
@@ -522,6 +579,20 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
 
                         break;
 
+                    case "downCancel":
+
+                        bar.setVisibility(View.GONE);
+
+                        getButton.setVisibility(View.VISIBLE);
+
+                        cancelButton.setVisibility(View.GONE);
+
+                        icaoEdit.setEnabled(true);
+
+                        downloadView.setText(activity.getResources().getString(R.string.downcancel_message));
+
+                        break;
+
                     // If chart is exists
                     case "fileExist":
 
@@ -529,13 +600,8 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
 
                         if(MainActivity.internalPDF) {
 
-                            // Check if it added to files list
-                            if(check_avail(icaoCode)) {
-
-                                // Add to file list
-                                addFile(icaoCode, "Normal", chartFile);
-
-                            }
+                            // Check if it added to files list, if no will add it
+                            if(check_avail(icaoCode)) {addFile(icaoCode, "Normal", chartFile);}
 
                         }
 
@@ -554,20 +620,26 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
 
                             if (check_avail(icaoCode)) {
 
+                                // Get all files in directory
                                 File[] files = chartFile.listFiles();
 
+                                // For each file in files list
                                 for (File file : files) {
 
+                                    // If file ends with .pdf, will add it
                                     if (file.toString().endsWith(".pdf")) {
 
+                                        // Get chart name by remove last 4 chars (.pdf)
                                         String chartName = file.getName().substring(0, file.getName().length() - 4);
 
+                                        // Add it to chart items list
                                         chartItems.add(new FilesItems(chartName, null, file));
 
                                     }
 
                                 }
 
+                                // If chart items list isn't empty
                                 if(!chartItems.isEmpty()) {
 
                                     // Make instance of chartItems
@@ -648,12 +720,12 @@ class Downloader extends AsyncTask<Void, Integer, Void> {
     // Open chart after download
     private void openPath(File chartFile, String op){
 
-        // Set intent
-        Intent target = new Intent(Intent.ACTION_VIEW);
-
         String type;
 
         String title;
+
+        // Set intent
+        Intent target = new Intent(Intent.ACTION_VIEW);
 
         if(op.equals("openFile")) {
 
